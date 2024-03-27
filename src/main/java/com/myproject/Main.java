@@ -11,9 +11,14 @@ public class Main {
                 num = in.nextInt();
                 if (num == 1) {
                     System.out.printf("Your number: %d \n", num);
+
                     RandomWordReader randomWordReader = new RandomWordReader();
                     String randomWord = randomWordReader.read_random_word();
-                    System.out.println("Random word from dictionary: " + randomWord);
+
+                    HangmanGame hangmanGame = new HangmanGame();
+                    hangmanGame.createStarArray(hangmanGame.getWordCharacters(randomWord));
+
+
                 } else if (num == 0) {
                     System.out.printf("Your number: %d \n", num);
                 }else {
