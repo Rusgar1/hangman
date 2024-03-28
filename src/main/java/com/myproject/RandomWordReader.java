@@ -17,11 +17,15 @@ public class RandomWordReader {
             String firstLine = reader.readLine();
             int randomNum = (int) (Math.random() * Integer.parseInt(firstLine)) + 1;
             int currentLine = 2;
-            while ((randomWord = reader.readLine()) != null){
-                if (currentLine == randomNum){
+            while ((randomWord = reader.readLine()) != null) {
+                if (currentLine == randomNum) {
                     break;
                 }
                 currentLine++;
+            }
+
+            if (randomWord != null) {
+                randomWord = randomWord.toUpperCase();
             }
         } catch (IOException e) {
             System.err.println("Ошибка чтения файла: " + e.getMessage());
