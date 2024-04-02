@@ -1,12 +1,15 @@
 package main.java.com.myproject;
 
 
-public class HangmanDrawer {
+import java.util.ArrayList;
+import java.util.Set;
+
+public class StatusGame {
     //Этот класс будет отвечать за отображение текущего состояния игры,
     // включая построение виселицы и вывод на экран текущего статуса игры.
 
     // Метод для отображения виселицы в зависимости от количества ошибок
-    public void drawHangman(int errors) {
+    public void statusGame(int errors) {
         switch (errors) {
             case 0:
                 System.out.println("  _____");
@@ -65,16 +68,54 @@ public class HangmanDrawer {
                 System.out.println("__|__");
                 System.out.println("Игра завершена.");
                 break;
-            default:
-                System.out.println("Неправильное количество ошибок!");
-                break;
         }
     }
 
     // Метод для отображения текущего статуса игры
-    public void displayGameStatus(char[] wordStatus, int errors, String incorrectLetters) {
-        System.out.println("Текущее состояние слова: " + new String(wordStatus));
-        drawHangman(errors);
-        System.out.println("Неправильные буквы: " + incorrectLetters);
+    public void displayGameStatus(String warning, ArrayList<Character> starWord, int errors, char guess) {
+        statusGame(errors);
+        System.out.println(guess + " - " + warning);
+        System.out.println("Слово: " + collectionToString(starWord));
+        System.out.println("Ошибок: " + errors);
     }
+
+    public void displayGameStatus(String guessedLetter, ArrayList<Character> starWord, int errors, Set<Character> incorrectCharacters, char guess) {
+        statusGame(errors);
+        System.out.println(guess + " - " + guessedLetter);
+        System.out.println("Слово: " + collectionToString(starWord));
+        System.out.println("Ошибок: " + errors + ": " + collectionToString(incorrectCharacters));
+    }
+
+    public void displayGameStatus(ArrayList<Character> starWord, int errors, Set<Character> incorrectCharacters, char guess) {
+        statusGame(errors);
+        System.out.println(guess);
+        System.out.println("Слово: " + collectionToString(starWord));
+        System.out.println("Ошибок: " + errors + ": " + collectionToString(incorrectCharacters));
+    }
+
+    public void displayGameStatus(String gameOver, ArrayList<Character> hiddenWord, ArrayList<Character> starWord, int errors, Set<Character> incorrectCharacters) {
+        statusGame(errors);
+        System.out.println(gameOver);
+        System.out.println("Слово: " + collectionToString(starWord));
+        System.out.println("Ошибок: " + errors + ":" + collectionToString(incorrectCharacters));
+        System.out.println("Загаданное слово: " + collectionToString(hiddenWord));
+    }
+
+
+    public String collectionToString(Iterable<Character> collection) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true; // Флаг для проверки первого элемента
+        for (char c : collection) {
+            if (!first) {
+                sb.append(", "); // Добавляем запятую перед элементом, если это не первый элемент
+            } else {
+                first = false; // Снимаем флаг после добавления первого элемента
+            }
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+
+
+
 }

@@ -1,74 +1,109 @@
 package main.java.com.myproject;
 
-import java.sql.SQLOutput;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
-
-// доработать: проверку введенного символа из списка ранее введенных букв
-// также System.out.println("Ошибки: " + (errorCount)); должен показывать все введенные ошибочные буквы
+import java.util.*;
 
 public class HangmanGame {
     //Этот класс будет отвечать за логику игры, включая управление словом,
     // отгаданными буквами и проверку предложенных букв пользователем.
 
-    private int attemptsCount; // переменная для хранения количества попыток
-    private char[] wordCharacters; // массив символов слов
-    private char[] starArray; // массив спрятанного слова
+    private String warning = "используй буквы русского алфавита";
+    private String guessedLetter = "Ввел отгаданную букву";
+    private String gameOver = "GAME OVER";
     private int errorCount = 0; //счетчик ошибок
-    private boolean correctGuess; // флаг для отслеживания правильности угаданной буквы
-    StringBuilder sb = new StringBuilder();
+    private int uniqueCharInWord = 0; //кол-во уникальных букв в слове
+    private int counQuessedCharInWord = 0; // кол-во отгаданных символов в слове
+    private boolean correctGuess; // флаг для отслеживания угаданной буквы
 
-    public char[] getWordCharacters(String randomWord) {
-        wordCharacters = randomWord.toCharArray();
-        return wordCharacters;
+    private char star = '*'; // звездочка
+
+    ArrayList<Character> hiddenWord = new ArrayList<>(); // загаданное слово wordCharacters
+    ArrayList<Character> starWord = new ArrayList<>(); // массив слова из звезд ****
+
+    Set<Character> incorrectCharacters = new HashSet<>(); // Создаем Set для хранения символов не входяящих в загаданное слово sb
+    StatusGame statusGame = new StatusGame();
+
+    public ArrayList<Character> getHiddenWord(String randomWord) {
+        for (int i = 0; i < randomWord.length(); i++) {
+            char c = randomWord.charAt(i);
+            hiddenWord.add(c);
+        }
+        return hiddenWord;
     }
 
-    public void createStarArray(char[] wordCharacters) {
-        starArray = new char[wordCharacters.length];
-        Arrays.fill(starArray, '*');
+    public void createStarWord(ArrayList<Character> hiddenWord) {
+        for (int i = 0; i < hiddenWord.size(); i++) {
+            starWord.add(star);
+        }
         suggestLetter();
     }
 
     public void suggestLetter() {
-        HangmanDrawer drawer = new HangmanDrawer();
         try (Scanner in = new Scanner(System.in)) {
-            while (attemptsCount < wordCharacters.length) {
+            while (errorCount !=6 && counQuessedCharInWord != hiddenWord.size()) {
+                System.out.println("-----------------------------------------------------");
                 System.out.println("Введи букву, которая может входить в загаданное слово");
                 char guess = Character.toUpperCase(in.next().charAt(0));
-
-                correctGuess = false; // Сбрасываем флаг перед каждой попыткой угадывания
-
-                for (int i = 0; i < wordCharacters.length; i++) {
-                    if (!Character.isLetter(guess) || Character.UnicodeBlock.of(guess) != Character.UnicodeBlock.CYRILLIC) {
-                        System.out.println("Используй буквы из русского алфавита");
-                        break;
-                    }
-
-                    if(starArray[i] == guess){ break; }
-
-                    if (wordCharacters[i] == guess) {
-                        starArray[i] = guess;
-                        correctGuess = true;
-                    }
+                if (!isValidChar(guess)) {
+                    statusGame.displayGameStatus(warning, starWord, errorCount, guess);
+                } else if (incorrectCharacters.contains(guess)){
+                    statusGame.displayGameStatus(guessedLetter, starWord, errorCount, incorrectCharacters, guess);
+                } else {
+                    suggestLetter1(guess);
                 }
-
-                if (!correctGuess) {
-                    errorCount++;
-                    sb.append(guess);
-                    sb.append(" ");
-                    drawer.drawHangman(errorCount);
-                }
-
-                attemptsCount++;
-
-                System.out.println("Слово: " + Arrays.toString(starArray));
-                System.out.println("Ошибок: " + (errorCount) + ": " + sb);
-                System.out.println("Буква: " + guess);
-                System.out.println("Загаданное слово: " + Arrays.toString(wordCharacters));
             }
-//            if(attemptsCount == wordCharacters.length){}
+        }
+    }
+
+    public boolean isValidChar(char guess) {
+        boolean correctChar = Character.isLetter(guess) && Character.UnicodeBlock.of(guess) == Character.UnicodeBlock.CYRILLIC;
+        return correctChar;
+    }
+
+    public void suggestLetter1(char guess){
+        correctGuess = false; // Сбрасываем флаг перед каждой попыткой угадывания
+
+        for (int i = 0; i < hiddenWord.size(); i++) {
+            if(hiddenWord.get(i) == guess){
+                starWord.set(i, guess);
+                correctGuess = true;
+                uniqueCharInWord++;
+                counQuessedCharInWord++;
+                if (counQuessedCharInWord == starWord.size()){
+                    break;
+                } else if (uniqueCharInWord == 1) {
+                    statusGame.displayGameStatus(starWord,errorCount, incorrectCharacters, guess);
+                }
+            }
+        }
+
+        if (uniqueCharInWord >1){
+            statusGame.displayGameStatus(starWord,errorCount, incorrectCharacters, guess);
+            uniqueCharInWord = 0;
+        }
+
+
+
+        if (!correctGuess && errorCount !=5) {
+            errorCount++;
+            incorrectCharacters.add(guess);
+            incorrectCharacters.add(' ');
+            statusGame.displayGameStatus(starWord, errorCount, incorrectCharacters, guess);
+        } else if (!correctGuess && errorCount == 5) { // это лишняя операция?
+            errorCount++;
+            incorrectCharacters.remove(guess);
+            incorrectCharacters.add(' ');
+        }
+
+        if(errorCount == 6 || counQuessedCharInWord == hiddenWord.size()){
+            statusGame.displayGameStatus(gameOver, hiddenWord, starWord, errorCount, incorrectCharacters);
+            hiddenWord.clear();
+            starWord.clear();
+            incorrectCharacters.clear();
+            errorCount = 0;
+            counQuessedCharInWord = 0;
+            StartGame.startGame();
         }
     }
 }
+
+
