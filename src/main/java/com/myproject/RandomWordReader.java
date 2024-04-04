@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class RandomWordReader {
-    String readRandomWord() {
+    public String readRandomWord() {
         String filePath = "src/main/java/resources/dictionary.txt";
         String randomWord = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath, StandardCharsets.UTF_8))) {
@@ -28,5 +28,4 @@ public class RandomWordReader {
         }
         return randomWord;
     }
-
 }
