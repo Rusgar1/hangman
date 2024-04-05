@@ -9,8 +9,8 @@ public class StatusGame {
     // включая построение виселицы и вывод на экран текущего статуса игры.
 
     // Метод для отображения виселицы в зависимости от количества ошибок
-    public void statusGame(int errors) {
-        switch (errors) {
+    public void statusGame(int mistakes) {
+        switch (mistakes) {
             case 0:
                 System.out.println("   ____");
                 System.out.println("  |    |");
@@ -68,6 +68,9 @@ public class StatusGame {
                 System.out.println("__|__");
                 System.out.println("Игра завершена.");
                 break;
+//            default -> {
+//                return null;
+//            }
         }
     }
 
@@ -77,25 +80,25 @@ public class StatusGame {
         System.out.println("Слово: " + collectionToString(starWord));
     }
 
-    public void displayGameStatus(String warning, ArrayList<Character> starWord, int errors, char guess) {
-        statusGame(errors);
+    public void displayGameStatus(String warning, ArrayList<Character> starWord, int mistakes, char guess) {
+        statusGame(mistakes);
         System.out.println(guess + " - " + warning);
         System.out.println("Слово: " + collectionToString(starWord));
-        System.out.println("Ошибок: " + errors);
+        System.out.println("Ошибок: " + mistakes);
     }
 
-    public void displayGameStatus(String guessed, ArrayList<Character> starWord, int errors, Set<Character> incorrectCharacters, char guess) {
-        statusGame(errors);
+    public void displayGameStatus(String guessed, ArrayList<Character> starWord, int mistakes, Set<Character> incorrectCharacters, char guess) {
+        statusGame(mistakes);
         System.out.println(guess + " - " + guessed);
         System.out.println("Слово: " + collectionToString(starWord));
-        System.out.println("Ошибок: " + errors + ": " + collectionToString(incorrectCharacters));
+        System.out.println("Ошибок: " + mistakes + ": " + collectionToString(incorrectCharacters));
     }
 
-    public void displayGameStatus(ArrayList<Character> starWord, int errors, Set<Character> incorrectCharacters, char guess) {
-        statusGame(errors);
+    public void displayGameStatus(ArrayList<Character> starWord, int mistakes, Set<Character> incorrectCharacters, char guess) {
+        statusGame(mistakes);
         System.out.println(guess);
         System.out.println("Слово: " + collectionToString(starWord));
-        System.out.println("Ошибок: " + errors + ": " + collectionToString(incorrectCharacters));
+        System.out.println("Ошибок: " + mistakes + ": " + collectionToString(incorrectCharacters));
     }
 
     public void displayGameStatus(String gameOver, ArrayList<Character> hiddenWord, ArrayList<Character> starWord, int errors, Set<Character> incorrectCharacters) {
