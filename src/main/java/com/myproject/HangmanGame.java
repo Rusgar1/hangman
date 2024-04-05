@@ -23,7 +23,6 @@ public class HangmanGame {
     Set<Character> incorrectCharacters = new HashSet<>(); // Создаем Set для хранения символов не входяящих в загаданное слово sb
     StatusGame statusGame = new StatusGame();
 
-
     public void newRound() {
         RandomWordReader randomWordReader = new RandomWordReader();
         String randomWord = randomWordReader.readRandomWord();
@@ -45,25 +44,23 @@ public class HangmanGame {
         for (int i = 0; i < hiddenWord.size(); i++) {
             starWord.add(star);
         }
-
     }
 
     public void suggestLetter() {
-        try (Scanner in = new Scanner(System.in)) {
-            while (errorCount != 6 && counQuessedCharInWord != hiddenWord.size()) {
-                System.out.println("-----------------------------------------------------");
-                System.out.println("Введи букву, которая может входить в загаданное слово");
-                statusGame.displayGameStatus(starWord);
-                char guess = Character.toUpperCase(in.next().charAt(0));
-                if (!isValidChar(guess)) {
-                    statusGame.displayGameStatus(warning, starWord, errorCount, guess);
-                } else if (incorrectCharacters.contains(guess)) {
-                    statusGame.displayGameStatus(guessedIncorrectCharacters, starWord, errorCount, incorrectCharacters, guess);
-                } else if (starWord.contains(guess)) {
-                    statusGame.displayGameStatus(guessedLetter, starWord, errorCount, incorrectCharacters, guess);
-                } else {
-                    processGuessedLetter(guess);
-                }
+        Scanner roundScanner = new Scanner(System.in);
+        while (errorCount != 6 && counQuessedCharInWord != hiddenWord.size()) {
+            System.out.println("-----------------------------------------------------");
+            System.out.println("Введи букву, которая может входить в загаданное слово");
+            statusGame.displayGameStatus(starWord);
+            char guess = Character.toUpperCase(roundScanner.next().charAt(0));
+            if (!isValidChar(guess)) {
+                statusGame.displayGameStatus(warning, starWord, errorCount, guess);
+            } else if (incorrectCharacters.contains(guess)) {
+                statusGame.displayGameStatus(guessedIncorrectCharacters, starWord, errorCount, incorrectCharacters, guess);
+            } else if (starWord.contains(guess)) {
+                statusGame.displayGameStatus(guessedLetter, starWord, errorCount, incorrectCharacters, guess);
+            } else {
+                processGuessedLetter(guess);
             }
         }
     }

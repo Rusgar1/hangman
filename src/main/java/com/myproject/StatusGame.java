@@ -112,7 +112,7 @@ public class StatusGame {
         boolean first = true;
         for (char c : collection) {
             if (!first) {
-                sb.append(", ");
+                sb.append(" ");
             } else {
                 first = false;
             }
